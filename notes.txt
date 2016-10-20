@@ -1,0 +1,107 @@
+
+--------------------------------------------------
+
+source("./.Rconfig");
+
+data <- data_drop(data_all, c("apache", "referrer", "agent", "url"));
+
+data <- data_drop(data_all, c("apache", "referrer", "agent"));
+data$url <- substr(data$url, 0, 100);
+
+--------------------------------------------------
+
+save_stats("77.96.49.93");
+
+	Creates a folder full of stats in /Volumes/WebServer/Projects/project/stats/
+
+--------------------------------------------------
+
+show_history(subset <- subset(data, path=="/admin/courses/bookings/" & time > 0));
+show_history(subset <- subset(data, path=="/admin/courses/bookings/" & time > 0 & !grepl("search=", url) & timestamp != "2015-11-27 11:17:08"));
+
+--------------------------------------------------
+
+save_screenshot('~/Downloads/Stats.png');
+
+--------------------------------------------------
+
+save_path_focus(subset, 1);
+
+	When you have a particular graph showing, this allows you to save an image of it.
+
+--------------------------------------------------
+
+show_count(subset <- subset(data, time > 1));
+show_count(subset <- subset(data, !grepl("^/a/js/", path) & time > 1));
+show_count(subset <- subset(data, grepl("^/admin/", path) & time > 1));
+
+show_count(subset <- subset(data, time > 0 & code == 500));
+show_count(subset <- subset(data, time > 0 & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 500));
+
+--------------------------------------------------
+
+show_access(subset <- subset(data, info != "-" & ip != "92.233.53.65" & ip != "52.17.185.43" & ip != "5.144.157.238"), "info");
+
+show_access(subset <- subset(data, path == "/member/login/" & method == "POST" & code != 302));
+show_access(subset <- subset(data, path == "/admin/login/" & method == "POST" & code != 302));
+
+show_history(subset <- subset(data, path=="/member/login/" & method == "POST" & code != 302));
+show_history(subset <- subset(data, path=="/admin/login/" & method == "POST" & code != 302));
+
+--------------------------------------------------
+
+subset <- subset(data, !grepl("^/a/js/", path) & time > 0);
+
+nrow(subset);
+
+mean(subset$time);
+median(subset$time);
+sd(subset$time);
+
+stats_percent(subset, 0.1);
+stats_percent(subset <- subset(data, path=="/admin/login/" & time > 0), 0.1);
+
+show_history(subset);
+show_history(subset <- subset(data, path=="/admin/courses/bookings/" & time > 0));
+
+--------------------------------------------------
+
+show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & time > 0.1));
+
+	// or show_paths()
+
+--------------------------------------------------
+
+Average time by hour:
+
+	subset <- subset(data, !(path %in% data_slow_paths) & !grepl("^/a/js/", path) & time > 0 & time < 4)
+
+	subset$hour = as.POSIXct(format(subset$timestamp, format='%Y-%m-%d %H'), format='%Y-%m-%d %H')
+
+	means <- aggregate(time ~ hour, subset, mean)
+
+	plot(means$hour, means$time, type='h', ann=FALSE);
+
+--------------------------------------------------
+
+Misc:
+
+	stats_max(subset, 300);
+	stats_group(subset, "agent");
+
+	graph_dots(subset, "path");
+	graph_history(subset);
+
+--------------------------------------------------
+
+One day:
+
+	grid.locator(); - Click on a dot, show a label.
+
+--------------------------------------------------
+
+Debugging
+
+	head(data)
+	str(data)
+	?str
