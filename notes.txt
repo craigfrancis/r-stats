@@ -1,4 +1,3 @@
-
 --------------------------------------------------
 
 source("./.Rconfig");
@@ -10,77 +9,72 @@ data$url <- substr(data$url, 0, 100);
 
 --------------------------------------------------
 
-save_stats("77.96.49.93");
+Creates weekly stats folder:
 
-	Creates a folder full of stats in /Volumes/WebServer/Projects/project/stats/
+	save_stats("77.96.49.93");
 
---------------------------------------------------
-
-show_history(subset <- subset(data, path=="/admin/courses/bookings/" & time > 0));
-show_history(subset <- subset(data, path=="/admin/courses/bookings/" & time > 0 & !grepl("search=", url) & timestamp != "2015-11-27 11:17:08"));
+	/Volumes/WebServer/Projects/${data_project}/stats/
 
 --------------------------------------------------
 
-save_screenshot('~/Downloads/Stats.png');
+Screenshot:
+
+	save_screenshot('~/Downloads/Stats.png');
 
 --------------------------------------------------
 
-save_path_focus(subset, 1);
+Screenshot, in stats folder:
 
-	When you have a particular graph showing, this allows you to save an image of it.
-
---------------------------------------------------
-
-show_count(subset <- subset(data, time > 1));
-show_count(subset <- subset(data, !grepl("^/a/js/", path) & time > 1));
-show_count(subset <- subset(data, grepl("^/admin/", path) & time > 1));
-
-show_count(subset <- subset(data, time > 0 & code == 500));
-show_count(subset <- subset(data, time > 0 & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 500));
+	save_path_focus(subset, 1);
 
 --------------------------------------------------
 
-show_access(subset <- subset(data, info != "-" & ip != "92.233.53.65" & ip != "52.17.185.43" & ip != "5.144.157.238"), "info");
+Request graph:
 
-show_access(subset <- subset(data, path == "/member/login/" & method == "POST" & code != 302));
-show_access(subset <- subset(data, path == "/admin/login/" & method == "POST" & code != 302));
-
-show_history(subset <- subset(data, path=="/member/login/" & method == "POST" & code != 302));
-show_history(subset <- subset(data, path=="/admin/login/" & method == "POST" & code != 302));
+	show_history(subset <- subset(data, path=="/admin/users/edit/" & time > 0));
+	show_history(subset <- subset(data, path=="/admin/users/edit/" & time > 0 & !grepl("search=", url) & timestamp != "2015-11-27 11:17:08"));
 
 --------------------------------------------------
 
-subset <- subset(data, !grepl("^/a/js/", path) & time > 0);
+Request list, grouped by path and method:
 
-nrow(subset);
-
-mean(subset$time);
-median(subset$time);
-sd(subset$time);
-
-stats_percent(subset, 0.1);
-stats_percent(subset <- subset(data, path=="/admin/login/" & time > 0), 0.1);
-
-show_history(subset);
-show_history(subset <- subset(data, path=="/admin/courses/bookings/" & time > 0));
+	show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & time > 0.1));
 
 --------------------------------------------------
 
-show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & time > 0.1));
+Request list, grouped by ip:
 
-	// or show_paths()
+	show_access(subset <- subset(data, path == "/member/login/" & method == "POST" & code != 302));
+	show_access(subset <- subset(data, path == "/admin/login/" & method == "POST" & code != 302));
 
 --------------------------------------------------
 
-Average time by hour:
+Summary:
 
-	subset <- subset(data, !(path %in% data_slow_paths) & !grepl("^/a/js/", path) & time > 0 & time < 4)
+	subset <- subset(data, !grepl("^/a/js/", path) & time > 0);
+
+	nrow(subset);
+
+	mean(subset$time);
+	median(subset$time);
+	sd(subset$time);
+
+	stats_percent(subset, 0.1);
+	stats_percent(subset <- subset(data, path=="/admin/login/" & time > 0), 0.1);
+
+--------------------------------------------------
+
+Averages graph, by hour:
+
+	subset <- subset(data, !(path %in% data_slow_paths) & time > 0)
 
 	subset$hour = as.POSIXct(format(subset$timestamp, format='%Y-%m-%d %H'), format='%Y-%m-%d %H')
 
 	means <- aggregate(time ~ hour, subset, mean)
 
-	plot(means$hour, means$time, type='h', ann=FALSE);
+	plot(means$hour, means$time, type='h', ann=FALSE, ylim=c(0, 0.2), xaxt="n");
+
+	axis.POSIXct(1, at=seq(as.Date(min(means$hour)), as.Date(max(means$hour)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
 
 --------------------------------------------------
 
@@ -105,3 +99,12 @@ Debugging
 	head(data)
 	str(data)
 	?str
+
+--------------------------------------------------
+
+# show_count(subset <- subset(data, time > 1));
+# show_count(subset <- subset(data, !grepl("^/a/js/", path) & time > 1));
+# show_count(subset <- subset(data, grepl("^/admin/", path) & time > 1));
+
+# show_count(subset <- subset(data, time > 0 & code == 500));
+# show_count(subset <- subset(data, time > 0 & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 500));
