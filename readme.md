@@ -33,9 +33,9 @@ Open R, and use the `read.table` function to import your log file:
 
 	data = read.table("/path/to/access_log", sep=" ")
 
-This is just like reading a CSV file, so each line in the file will use a numerical offset.
+This is just like reading a CSV file, so each line in the file will contain values with a numerical offset.
 
-If you have problems with the User Agent string containing quote marks (rare, but some bots do this), then use `sed` to convert them unto CSV escaped values:
+If you have problems with the User Agent string containing quote marks (some bots do this), then use `sed` to convert them unto CSV escaped values:
 
 	sed -i '' -e 's/\\"/""/g' "/path/to/access_log";
 
@@ -62,9 +62,7 @@ It then launches R, which looks for and runs a `.Rprofile` file - which I've set
 
 ### Parsing the logs
 
-The [start.r](./src/start.r) script defines some functions, and run your project specific config file.
-
-Which may simply run the `data_load` function with:
+The [start.r](./src/start.r) script defines some functions, and executes your project specific config file - which may simply run the `data_load` function with:
 
 	data_project = "[NAME]";
 	data_path = "[SOURCE]";
