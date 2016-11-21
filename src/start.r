@@ -143,7 +143,7 @@ show_subset <- function(subset, file) {
 	if (missing(file)) {
 		print(tail(subset[order(subset$time),], n=300), row.names = FALSE, right = FALSE);
 	} else {
-		write.csv(tail(subset[order(subset$time),]), file=file, row.names = FALSE);
+		write.csv(subset[order(subset$time),], file=file, row.names = FALSE);
 	}
 }
 
