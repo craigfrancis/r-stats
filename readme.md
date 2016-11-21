@@ -97,7 +97,7 @@ How many resulted in errors:
 
 	subset(data, code != 200 & code != 301 & code != 302 & code != 304);
 
-All requests that took longer than a second:
+Requests that took longer than a second:
 
 	subset <- subset(data, time > 1);
 
