@@ -26,4 +26,4 @@ Add the following code to the beginning of your script:
 
 It uses the [apache_note](http://php.net/manual/en/function.apache-note.php) function to record a "TIME_INFO" note.
 
-You will also need to setup [apache logging](../docs-log/apache.md) to have this recorded in your log file.
+You will also need to setup [apache logging](../../docs/log/apache.md) to have this recorded in your log file.
