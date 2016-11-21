@@ -105,7 +105,7 @@ Requests that took longer than a second:
 
 A summary of pages that took longer than 100ms (0.1 second), and how often they were requested:
 
-	subset <- subset(data, time >= 0.1 & time < 1)
+	subset <- subset(data, time >= 0.1 & time < 1);
 
 	counts <- ddply(subset, .(subset$path, subset$method), summarize, freq = length(timestamp));
 	names(counts) <- c("path", "method", "requests");
@@ -113,7 +113,7 @@ A summary of pages that took longer than 100ms (0.1 second), and how often they 
 
 And a graph of the request times for a specific page:
 
-	subset <- subset(data, path=="/url/to/view/" & time > 0)
+	subset <- subset(data, path=="/url/to/view/" & time > 0);
 
 	plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim = c(0,max(subset$time) * 1.1), yaxs="i", xaxt="n");
 	axis.POSIXct(1, at=seq(as.Date(min(subset$timestamp)), as.Date(max(subset$timestamp)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
@@ -141,7 +141,7 @@ It then launches R, which looks for and runs a `.Rprofile` file - which I've set
 
 The [start.r](./src/start.r) script defines some functions, and executes your project specific config file.
 
-Which could simply run the `data_load` function with:
+Which could simply run the `data_load` function:
 
 	data_project = "[NAME]";
 	data_path = "[SOURCE]";
