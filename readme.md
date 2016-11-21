@@ -1,7 +1,7 @@
 
 # Using R to check website performance
 
-When a scripting language such as PHP generates HTML, it can be useful to keep track of how long it takes for every request your website receives.
+When generating HTML, it can be useful to keep track of how long it takes.
 
 The notes below will allow you to record and analyse this information.
 
