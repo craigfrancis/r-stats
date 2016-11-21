@@ -88,7 +88,7 @@ Lets see how many requests there were in total:
 
 The average time it took to process those requests:
 
-	subset <- subset(data, path=="/admin/students/" & time > 0);
+	subset <- subset(data, time > 0);
 
 	mean(subset$time);
 	median(subset$time);
