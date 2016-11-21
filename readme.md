@@ -31,7 +31,7 @@ Download and install the [R.app GUI](http://cran.us.r-project.org/bin/) on your 
 
 Open R, and use the `read.table` function to import your log file:
 
-	data = read.table("/path/to/access_log", sep=" ")
+	data = read.table("/path/to/access_log", sep=" ");
 
 This is just like reading a CSV file, so each line in the file will contain values with a numerical offset.
 
@@ -45,10 +45,10 @@ If you have problems with the User Agent string containing quote marks (some bot
 
 Lets convert the date/time (ISO formatted) into a POSIX timestamp, extract the processing time, method, url, etc:
 
-	data$timestamp = as.POSIXct(strptime(paste(data[,5], data[,6]), '[%Y-%m-%d %H:%M:%S]'))
-	data$timings <- str_match(data[,7], "\\[([0-9]*)/(.*)\\]")[,c(2,3)]
-	data$info <- str_match(data[,4], "\\[(.*)\\]")[,2]
-	data$request <- str_match(data[,8], "([A-Z]+) (/.*) HTTP")[,c(2,3)]
+	data$timestamp = as.POSIXct(strptime(paste(data[,5], data[,6]), '[%Y-%m-%d %H:%M:%S]'));
+	data$timings <- str_match(data[,7], "\\[([0-9]*)/(.*)\\]")[,c(2,3)];
+	data$info <- str_match(data[,4], "\\[(.*)\\]")[,2];
+	data$request <- str_match(data[,8], "([A-Z]+) (/.*) HTTP")[,c(2,3)];
 
 Give each field a proper name:
 
@@ -63,20 +63,20 @@ Give each field a proper name:
 		code = data[,9],
 		size = data[,10],
 		referrer = data[,11],
-		agent = data[,12])
+		agent = data[,12]);
 
 Then do a bit of cleanup, e.g. converting the size to a number:
 
-	data$info <- as.character(data$info)
-	data$code <- as.character(data$code)
-	data$size <- as.numeric(data$size)
-	data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
+	data$info <- as.character(data$info);
+	data$code <- as.character(data$code);
+	data$size <- as.numeric(data$size);
+	data$time <- as.numeric(gsub('-', NA, as.character(data$time)));
 
-	data$path <- gsub("\\?.*", "", data$url)
+	data$path <- gsub("\\?.*", "", data$url);
 
 And optionally remove some fields:
 
-	data <- data[,!(names(data) %in% c("referrer", "url", "ip", "apache", "agent"))]
+	data <- data[,!(names(data) %in% c("referrer", "url", "ip", "apache", "agent"))];
 
 ---
 
