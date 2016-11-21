@@ -33,15 +33,88 @@ Open R, and use the `read.table` function to import your log file:
 
 	data = read.table("/path/to/access_log", sep=" ")
 
-This is just like reading a CSV file, so each line in the file will contain values with a numerical offset.
+This is just like reading a CSV file, so each line in the file will contain values with a numerical offset (just as a word of warning, a 50 MB file can take about 30 seconds to parse).
 
 If you have problems with the User Agent string containing quote marks (some bots do this), then use `sed` to convert them unto CSV escaped values:
 
 	sed -i '' -e 's/\\"/""/g' "/path/to/access_log";
 
-###  Using your logs
+### Parsing values
 
-Have a look at the [notes.txt](./notes.txt) file to see what R can do.
+Ideally you would convert the date/time (ISO formatted) into a POSIX timestamp, extract the processing time, request method, url, etc:
+
+	data$timestamp = as.POSIXct(strptime(paste(data[,5], data[,6]), '[%Y-%m-%d %H:%M:%S]'))
+	data$timings <- str_match(data[,7], "\\[([0-9]*)/(.*)\\]")[,c(2,3)]
+	data$info <- str_match(data[,4], "\\[(.*)\\]")[,2]
+	data$request <- str_match(data[,8], "([A-Z]+) (/.*) HTTP")[,c(2,3)]
+
+Then give each field a proper name:
+
+	data = cbind(
+		timestamp = data[13],
+		apache = data[,14][,1],
+		time = data[,14][,2],
+		ip = data[,1],
+		info = data[,15],
+		method = data[,16][,1],
+		url = data[,16][,2],
+		code = data[,9],
+		size = data[,10],
+		referrer = data[,11],
+		agent = data[,12])
+
+And finally a bit of cleanup, e.g. converting things to the correct format:
+
+	data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
+	data$info <- as.character(data$info)
+	data$code <- as.character(data$code)
+	data$size <- as.numeric(data$size)
+
+	data$path <- gsub("\\?.*", "", data$url)
+
+	data <- data[,!(names(data) %in% c("referrer", "url", "ip", "apache", "agent"))]
+
+---
+
+##  Using your logs
+
+Lets see how many requests your website handled:
+
+	nrow(data)
+
+The average time it took to process the requests:
+
+	subset <- subset(data, time > 0);
+
+	mean(subset$time);
+	median(subset$time);
+
+And how many resulted in errors:
+
+	subset(data, code != 200 & code != 301 & code != 302 & code != 304);
+
+All responses that take longer than a second to process should be looked into:
+
+	subset <- subset(data, time > 1);
+
+	print(tail(subset[order(subset$time),], n=300), row.names = FALSE, right = FALSE);
+
+Lets see which pages took longer than 100ms (0.1 second), and how often they were requested:
+
+	subset <- subset(data, time >= 0.1 & time < 1)
+
+	counts <- ddply(subset, .(subset$path, subset$method), summarize, mean = round(mean(time), 3), freq = length(timestamp));
+	names(counts) <- c("path", "method", "mean", "requests");
+	print(counts[order(counts$requests),c(4,3,2,1)], row.names = FALSE, right = FALSE);
+
+If we take the slowest page, we can plot the request times on a graph:
+
+	subset <- subset(data, path=="/url/to/view/" & time > 0)
+
+	plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim = c(0,max(subset$time) * 1.1), yaxs="i", xaxt="n");
+	axis.POSIXct(1, at=seq(as.Date(min(subset$timestamp)), as.Date(max(subset$timestamp)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
+
+	![Example Graph](./docs/images/example-1.png)
 
 ---
 
@@ -62,7 +135,9 @@ It then launches R, which looks for and runs a `.Rprofile` file - which I've set
 
 ### Parsing the logs
 
-The [start.r](./src/start.r) script defines some functions, and executes your project specific config file - which may simply run the `data_load` function with:
+The [start.r](./src/start.r) script defines some functions, and executes your project specific config file.
+
+Which could simply run the `data_load` function with:
 
 	data_project = "[NAME]";
 	data_path = "[SOURCE]";
@@ -71,8 +146,8 @@ The [start.r](./src/start.r) script defines some functions, and executes your pr
 
 Or it could be setup to ignore certain URL's which are always going to be slow - for example the members login form ([example](./config/example.r)).
 
-Just as a word of warning, a 50 MB file can take about 30 seconds to parse.
-
 After parsing, the [start.r](./src/start.r) script will create a duplicate of `data_all`, with a few less columns:
 
 	data <- data_drop(data_all, c("apache", "referrer", "agent"));
+
+Now have a look at [notes.txt](./notes.txt) to see what we can do.
