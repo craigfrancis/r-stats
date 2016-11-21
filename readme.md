@@ -13,7 +13,7 @@ The notes below will allow you to record and analyse this information.
 
 First we need to record how long it takes for the page to be created.
 
-The execution time can be recorded with:
+The processing time can be recorded with:
 
 * [PHP with Apache](./docs/time/php-apache.md)
 * [PHP with Nginx](./docs/time/php-nginx.md)
@@ -88,7 +88,7 @@ Lets see how many requests there were in total:
 
 The average time it took to process those requests:
 
-	subset <- subset(data, time > 0);
+	subset <- subset(data, path=="/admin/students/" & time > 0);
 
 	mean(subset$time);
 	median(subset$time);
