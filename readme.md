@@ -35,7 +35,7 @@ Open R, and use the `read.table` function to import your log file:
 
 This is just like reading a CSV file, so each line in the file will contain values with a numerical offset.
 
-For reference, a 50 MB file takes about 30 seconds to parse.
+A 50 MB file takes about 30 seconds to parse.
 
 If you have problems with the User Agent string containing quote marks (some bots do this), then use `sed` to convert them into CSV escaped values:
 
@@ -65,16 +65,16 @@ Give each field a proper name:
 		referrer = data[,11],
 		agent = data[,12])
 
-Then do a bit of cleanup, e.g. converting things to the correct format:
+Then do a bit of cleanup, e.g. converting the size to a number:
 
-	data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
 	data$info <- as.character(data$info)
 	data$code <- as.character(data$code)
 	data$size <- as.numeric(data$size)
+	data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
 
 	data$path <- gsub("\\?.*", "", data$url)
 
-And finally, lets drop some fields you might not need:
+And optionally remove some fields:
 
 	data <- data[,!(names(data) %in% c("referrer", "url", "ip", "apache", "agent"))]
 
@@ -84,7 +84,7 @@ And finally, lets drop some fields you might not need:
 
 Lets see how many requests your website handled:
 
-	nrow(data)
+	nrow(data);
 
 The average time it took to process those requests:
 
@@ -97,7 +97,7 @@ How many resulted in errors:
 
 	subset(data, code != 200 & code != 301 & code != 302 & code != 304);
 
-All responses that took longer than a second:
+All requests that took longer than a second:
 
 	subset <- subset(data, time > 1);
 
@@ -111,7 +111,7 @@ A summary of pages that took longer than 100ms (0.1 second), and how often they 
 	names(counts) <- c("path", "method", "requests");
 	print(counts[order(counts$requests),c(3,2,1)], row.names = FALSE, right = FALSE);
 
-And plot the request times for a specific page on a graph:
+And graph the request times for a specific page:
 
 	subset <- subset(data, path=="/url/to/view/" & time > 0)
 
@@ -122,7 +122,7 @@ And plot the request times for a specific page on a graph:
 
 ---
 
-## Extra...
+## Extra
 
 If you want to run this on a regular basis, it's worth creating a `~/.bash_login` function such as:
 
@@ -148,7 +148,7 @@ Which could simply run the `data_load` function with:
 
 	data_all = data_load(data_path);
 
-Or it could be setup to ignore certain URL's which are always going to be slow - for example the members login form ([example](./config/example.r)).
+Or it could be setup to ignore certain URL's which are always going to be slow - for example the login form ([example](./config/example.r)).
 
 After parsing, the [start.r](./src/start.r) script will create a duplicate of `data_all`, with a few less columns:
 
