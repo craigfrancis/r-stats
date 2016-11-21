@@ -82,7 +82,7 @@ And optionally remove some fields:
 
 ##  Using your logs
 
-Lets see how many requests your website handled:
+Lets see how many requests there were in total:
 
 	nrow(data);
 
@@ -111,7 +111,7 @@ A summary of pages that took longer than 100ms (0.1 second), and how often they 
 	names(counts) <- c("path", "method", "requests");
 	print(counts[order(counts$requests),c(3,2,1)], row.names = FALSE, right = FALSE);
 
-And graph the request times for a specific page:
+And a graph of the request times for a specific page:
 
 	subset <- subset(data, path=="/url/to/view/" & time > 0)
 
@@ -150,7 +150,7 @@ Which could simply run the `data_load` function with:
 
 Or it could be setup to ignore certain URL's which are always going to be slow - for example the login form ([example](./config/example.r)).
 
-After parsing, the [start.r](./src/start.r) script will create a duplicate of `data_all`, with a few less columns:
+After parsing, the [start.r](./src/start.r) script will create a duplicate of `data_all`, with a few less fields:
 
 	data <- data_drop(data_all, c("apache", "referrer", "agent"));
 
