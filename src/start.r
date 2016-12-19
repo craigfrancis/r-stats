@@ -277,6 +277,11 @@ save_stats <- function(admin_ip) {
 
 		}
 
+		subset <- subset(data, size > 0 & ip != admin_ip);
+		subset <- subset[c("size", "path")];
+		subset <- head(subset[order(-subset$size),], n=30);
+		save_subset(file.path(path, "requests-size.csv"), subset);
+
 	#--------------------------------------------------
 
 # TODO: Also limit to POST?
