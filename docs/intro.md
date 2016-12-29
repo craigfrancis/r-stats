@@ -27,8 +27,8 @@ And while not strictly related to performance, you can also see:
 
 1. General stats, like the number of requests over time.
 2. A list of 404 errors.
-3. How many times the admin log in (i.e. a POST to the login form, with a 302 response).
-4. How many times people have problems filling out a form (an error message will use a 200 response).
+3. How often customers have problems filling out a form (error message could use a 200 response, success a 302).
+4. How many times the admin log in (i.e. a POST to the login form, with a 302 or a 200 response).
 5. Search terms being used by customers, and how effective the results are (i.e. looking at the referrer).
 
 All you need to do is record the time it takes to create the response, then load the log file into R with:
