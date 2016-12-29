@@ -20,7 +20,7 @@ You can also see individual requests that took much longer than expected, for ex
 1. When using a domain name to connect to the database, the DNS lookup can take a few seconds.
 2. When using PHP sessions, a slow response can affect other requests as well (due to the session lock).
 3. When checking if email addresses include a valid domain name, it can take a few seconds for a response.
-4. When using a third party API, a timeout might not work as you expect (e.g. `fsockopen` vs `stream_set_timeout`).
+4. When using a third party API, a timeout might not work as you expect (e.g. [fsockopen](https://php.net/fsockopen) vs [stream_set_timeout](https://php.net/stream_set_timeout)).
 5. Hard drives can start having problems, or the CPU may be busy on other things (especially on a virtual machine).
 
 And while not strictly related to performance, you can also see:
