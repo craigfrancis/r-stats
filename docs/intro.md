@@ -1,3 +1,5 @@
+# Using R for stats
+
 The main performance issue for most websites is the network - i.e. number of requests, large files, slow connection, etc.
 
 However the time it takes to create the HTML is also a factor (ideally less than 100ms).
