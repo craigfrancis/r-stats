@@ -3,7 +3,7 @@
 
 When generating HTML, it can be useful to keep track of how long it takes.
 
-The notes below will allow you to record and analyse this information.
+There is a short [intro article](docs/intro.md) to explain the basics, and the notes below will explain how you can record and analyse this information.
 
 ---
 
