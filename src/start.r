@@ -3,16 +3,16 @@ library("stringr");
 library("ggplot2");
 library("plyr");
 library("data.table", warn.conflicts=FALSE, quietly=TRUE);
-library("dplyr", warn.conflicts=FALSE);
+library("dplyr", warn.conflicts=FALSE); # dtplyr does not have the group_by function
 library("splitstackshape");
 
-data_load <- function(log_path) {
+data_load <- function(data_path) {
 
 	#--------------------------------------------------
 
 		cat("Loading data...\n");
 
-		data = read.table(log_path, sep=" ")
+		data = read.table(data_path, sep=" ")
 
 		cat("  Done\n");
 
@@ -71,8 +71,8 @@ data_load <- function(log_path) {
 		if (exists('data_info_timings')) { # http://stackoverflow.com/questions/34590381/parsing-and-calculating-numbers-in-r
 			cat("Parsing timings...\n");
 			data_info_timings2 <- paste(data_info_timings, "_2", sep="");
-			DT <- copy(setDT(data, keep.rownames = TRUE));
-			data <- DT %>%
+			setDT(data, keep.rownames = TRUE);
+			data <- data %>%
 				cSplit(data_info_timings, ",", "long") %>%               # split, long format, by ","
 				cSplit(data_info_timings, "=") %>%                       # split, wide format, by "="
 				group_by(rn) %>%                                         # group by row names
@@ -82,9 +82,10 @@ data_load <- function(log_path) {
 				mutate(time_php = round((time - time_ext), 4)) %>%       # calculate the difference
 				left_join(data, by=c("rn", "time")) %>%                  # merge with original data
 				select(timestamp, everything());                         # put timestamp first
-			data[,rn:=NULL]; # Try to get setDF to use rownames.
 			setorder(data, "timestamp");
+			# data <- as.data.frame.matrix(data);
 			setDF(data);
+			data <- data_drop(data, c("rn"));
 			cat("  Done\n");
 		}
 

@@ -27,6 +27,11 @@ And this can be written to your logs with:
 
 Download and install the [R.app GUI](http://cran.us.r-project.org/bin/) on your local computer.
 
+You will probably need to install some additional packages as well; for example:
+
+	install.packages("stringr");
+	install.packages("ggplot2");
+
 ### Importing
 
 Open R, and use the `read.table` function to import your log file:
