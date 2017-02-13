@@ -39,9 +39,9 @@ data_load <- function(data_path) {
 			agent = data[,12])
 
 		data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
+		data$size <- as.numeric(gsub('-', NA, as.character(data$size)))
 		data$info <- as.character(data$info)
 		data$code <- as.character(data$code)
-		data$size <- as.numeric(data$size)
 		data$path <- gsub("\\?.*", "", data$url)
 
 		cat("  Done\n");
