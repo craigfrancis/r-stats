@@ -25,6 +25,7 @@ Screenshot:
 
 Screenshot, in stats folder:
 
+	subset <- subset(data, path == "/admin/users/edit/" & time > 0)
 	save_path_focus(subset, 1);
 
 --------------------------------------------------
