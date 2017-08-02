@@ -134,7 +134,7 @@ graph_dots <- function(subset, group = "path") {
 }
 
 graph_history <- function(subset) {
-	plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim = c(0,max(subset$time) * 1.1), yaxs="i", xaxt="n");
+	plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim = c(0,max(subset$time) * 1.1), yaxs="i", xaxt="n", panel.first = abline(h = 0.1, col = "red"));
 	axis.POSIXct(1, at=seq(as.Date(min(subset$timestamp)), as.Date(max(subset$timestamp)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
 }
 
@@ -299,11 +299,11 @@ save_stats <- function(admin_ip) {
 
 		subset$hour = as.POSIXct(format(subset$timestamp, format='%Y-%m-%d %H'), format='%Y-%m-%d %H')
 		means <- aggregate(time ~ hour, subset, mean)
-		plot(means$hour, means$time, type='h', ann=FALSE, ylim=c(0, 0.2), xaxt="n");
+		plot(means$hour, means$time, type='h', ann=FALSE, ylim=c(0, 0.2), yaxs="i", xaxt="n", panel.first = abline(h = 0.1, col = "red"));
 		axis.POSIXct(1, at=seq(as.Date(min(means$hour)), as.Date(max(means$hour)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
 		save_screenshot(file.path(path, "stats-averages.png"));
 
-		plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim=c(0, 1), xaxt="n");
+		plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim=c(0, 1), yaxs="i", xaxt="n", panel.first = abline(h = 0.1, col = "red"));
 		axis.POSIXct(1, at=seq(as.Date(min(subset$timestamp)), as.Date(max(subset$timestamp)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
 		save_screenshot(file.path(path, "stats-access.png"));
 
