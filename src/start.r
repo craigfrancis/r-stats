@@ -1,10 +1,12 @@
 
-library("stringr");
-library("ggplot2");
-library("plyr");
-library("data.table", warn.conflicts=FALSE, quietly=TRUE);
-library("dplyr", warn.conflicts=FALSE); # dtplyr does not have the group_by function
-library("splitstackshape");
+Sys.setenv(TZ="Europe/London")
+
+suppressPackageStartupMessages(library("stringr"));
+suppressPackageStartupMessages(library("ggplot2"));
+suppressPackageStartupMessages(library("plyr"));
+suppressPackageStartupMessages(library("data.table"));
+suppressPackageStartupMessages(library("dplyr")); # dtplyr does not have the group_by function
+suppressPackageStartupMessages(library("splitstackshape"));
 
 data_load <- function(data_path) {
 

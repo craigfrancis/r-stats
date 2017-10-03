@@ -31,6 +31,9 @@ You will probably need to install some additional packages as well; for example:
 
 	install.packages("stringr");
 	install.packages("ggplot2");
+	install.packages("dplyr");
+	install.packages("data.table");
+	install.packages("splitstackshape");
 
 ### Importing
 
