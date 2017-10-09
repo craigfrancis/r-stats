@@ -12,6 +12,10 @@ ROOT="/Volumes/WebServer/Projects/craig.rstats/src";
 
 cd "${ROOT}";
 
+if [ -f "${ROOT}/.RData" ]; then
+	rm "${ROOT}/.RData";
+fi
+
 if [ -L "${ROOT}/.Rconfig" ]; then
 	rm "${ROOT}/.Rconfig";
 fi
