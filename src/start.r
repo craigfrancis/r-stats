@@ -249,8 +249,8 @@ save_stats <- function(admin_ip) {
 
 			subset <- subset(data, path == k$login_url & method == "POST" & code != 302);
 			counts <- ddply(subset, .(subset$ip), nrow);
-			names(counts) <- c("ip", "requests");
-			write.csv(counts[order(-counts$requests),c(2,1)], paste(path, "/requests-login-errors-", k$name, ".csv", sep=""), row.names = FALSE);
+			names(counts) <- c("ip", "errors");
+			write.csv(counts[order(-counts$errors),c(2,1)], paste(path, "/requests-login-errors-", k$name, ".csv", sep=""), row.names = FALSE);
 
 			subset <- subset(data, path == k$login_url & method == "POST" & code == 302);
 			counts <- ddply(subset, .(subset$ip, subset[[k$field]]), nrow);
@@ -309,6 +309,10 @@ save_stats <- function(admin_ip) {
 		axis.POSIXct(1, at=seq(as.Date(min(subset$timestamp)), as.Date(max(subset$timestamp)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
 		save_screenshot(file.path(path, "stats-access.png"));
 
+	#--------------------------------------------------
+
+		return(path);
+
 }
 
 #--------------------------------------------------
@@ -318,3 +322,11 @@ source("./.Rconfig");
 data <- data_drop(data_all, c("apache", "referrer", "agent"));
 
 subset <- subset(data, time > 0);
+
+#--------------------------------------------------
+
+if (exists('auto_save_stats_ip')) {
+	stats_path = save_stats(auto_save_stats_ip);
+	system2('open', args = c(stats_path));
+	quit(save = 'no');
+}

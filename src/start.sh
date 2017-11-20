@@ -28,7 +28,18 @@ fi
 
 cat "${CONFIG}" | sed "s/\[SOURCE\]/${SOURCE//\//\\/}/" | sed "s/\[NAME\]/${NAME}/" > "${ROOT}/.Rconfig";
 
-mate /Volumes/WebServer/Projects/craig.rstats/
-mate /Volumes/WebServer/Projects/craig.rstats/notes.txt
+if [ -n "${3:-}" ]; then
 
-/Applications/R.app/Contents/MacOS/R "${ROOT}/" --arg ${NAME} &
+	echo "" >> "${ROOT}/.Rconfig";
+	echo "auto_save_stats_ip = '${3:-}';" >> "${ROOT}/.Rconfig";
+
+	/Applications/R.app/Contents/MacOS/R "${ROOT}/"
+
+else
+
+	mate /Volumes/WebServer/Projects/craig.rstats/
+	mate /Volumes/WebServer/Projects/craig.rstats/notes.txt
+
+	/Applications/R.app/Contents/MacOS/R "${ROOT}/" &
+
+fi
