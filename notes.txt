@@ -39,7 +39,7 @@ Request graph:
 
 Request list, grouped by path and method:
 
-	show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & time > 0.1));
+	show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & time > 0), 0.1);
 
 --------------------------------------------------
 

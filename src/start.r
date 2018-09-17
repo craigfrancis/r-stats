@@ -164,13 +164,23 @@ show_paths <- function(subset) {
 	stats_group(subset, "path");
 }
 
-show_method_paths <- function(subset, file) {
-	counts <- ddply(subset, .(subset$path, subset$method), summarize, mean = round(mean(time), 3), min = round(min(time), 3), max = round(max(time), 3), freq = length(timestamp));
-	names(counts) <- c("path", "method", "mean", "min", "max", "requests");
-	if (missing(file)) {
-		print(counts[order(counts$requests),c(6,3,2,1,4,5)], row.names = FALSE, right = FALSE);
+show_method_paths <- function(subset, min_time, file) {
+	if (missing(min_time)) {
+		counts <- ddply(subset, .(subset$path, subset$method), summarize, mean = round(mean(time), 3), min = round(min(time), 3), max = round(max(time), 3), freq = length(timestamp));
+		names(counts) <- c("path", "method", "mean", "min", "max", "requests");
+		counts <- subset(counts, requests > 0);
+		counts <- counts[order(-counts$requests),c(6,2,1,3,4,5)];
 	} else {
-		write.csv(counts[order(-counts$requests),c(6,3,2,1,4,5)], file=file, row.names = FALSE);
+		counts <- ddply(subset, .(subset$path, subset$method), summarize, mean = round(mean(time), 3), min = round(min(time), 3), max = round(max(time), 3), freq = length(timestamp), exceeds = sum(time >= min_time));
+		names(counts) <- c("path", "method", "mean", "min", "max", "requests", "exceeds");
+		counts <- subset(counts, exceeds > 0);
+		counts$percent = paste(round(((counts$exceeds / counts$requests) * 100), 0), "%", sep="");
+		counts <- counts[order(-counts$exceeds),c(7,8,2,1,3,4,5,6)];
+	}
+	if (missing(file)) {
+		print(counts, row.names = FALSE, right = FALSE);
+	} else {
+		write.csv(counts, file=file, row.names = FALSE);
 	}
 }
 
@@ -237,7 +247,7 @@ save_stats <- function(admin_ip) {
 
 		show_subset(subset(data, ip != admin_ip & time >= 1), file.path(path, "slow-very.csv"));
 
-		show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & ip != admin_ip & time >= 0.1 & time < 1), file.path(path, "slow-summary.csv"));
+		show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & ip != admin_ip & time > 0 & time < 1), 0.1, file.path(path, "slow-summary.csv"));
 
 		save_subset(file.path(path, "errors-500.csv"), subset(data, ip != admin_ip & time > 0 & code == 500));
 
