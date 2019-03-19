@@ -1,6 +1,8 @@
 
 Sys.setenv(TZ="Europe/London")
 
+par(bg = 'white') # Not transparent
+
 suppressPackageStartupMessages(library("stringr"));
 suppressPackageStartupMessages(library("ggplot2"));
 suppressPackageStartupMessages(library("plyr"));
