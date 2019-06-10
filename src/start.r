@@ -144,11 +144,11 @@ graph_history <- function(subset) {
 
 #--------------------------------------------------
 
-show_subset <- function(subset, file) {
+show_subset <- function(subset, order_field = "time", file = NULL) {
 	if (missing(file)) {
-		print(tail(subset[order(subset$time),], n=300), row.names = FALSE, right = FALSE);
+		print(tail(subset[order(subset[[order_field]]),], n=300), row.names = FALSE, right = FALSE);
 	} else {
-		write.csv(subset[order(subset$time),], file=file, row.names = FALSE);
+		write.csv(subset[order(subset[[order_field]]),], file=file, row.names = FALSE);
 	}
 }
 
@@ -247,7 +247,11 @@ save_stats <- function(admin_ip) {
 		cat(median(subset$time), file=file.path(path, "stats-median.txt"));
 		cat(sd(subset$time),     file=file.path(path, "stats-sd.txt"));
 
-		show_subset(subset(data, ip != admin_ip & time >= 1), file.path(path, "slow-very.csv"));
+		very_slow_subset <- subset(data, ip != admin_ip & time >= 1);
+		very_slow_order_1 <- "time_php"
+		very_slow_order_2 <- paste("*", very_slow_order_1, "*", sep = "")
+		colnames(very_slow_subset)[colnames(very_slow_subset)==very_slow_order_1] <- very_slow_order_2
+		show_subset(very_slow_subset, very_slow_order_2, file.path(path, "slow-very.csv"));
 
 		show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & ip != admin_ip & time > 0 & time < 1), 0.1, file.path(path, "slow-summary.csv"));
 
