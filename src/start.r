@@ -14,41 +14,58 @@ data_load <- function(data_path) {
 
 	#--------------------------------------------------
 
-		cat("Loading data...\n");
+		if (exists('data_fields')) { # Use Framework logs, a simpler CSV file format.
 
-		data = read.table(data_path, sep=" ")
+			cat("Loading access logs...\n");
 
-		cat("  Done\n");
+			data = read.csv(file = data_path, header = FALSE)
 
-	#--------------------------------------------------
+			names(data) <- data_fields;
 
-		cat("Parsing data...\n");
+			cat("  Done\n");
+			cat("Parsing data...\n");
 
-		data$timestamp = as.POSIXct(strptime(paste(data[,5], data[,6]), '[%Y-%m-%d %H:%M:%S]'))
-		data$timings <- str_match(data[,7], "\\[([0-9]*)/(.*)\\]")[,c(2,3)]
-		data$info <- str_match(data[,4], "\\[(.*)\\]")[,2]
-		data$request <- str_match(data[,8], "([A-Z]+) (/.*) HTTP")[,c(2,3)]
+			data$timestamp = as.POSIXct(strptime(data$timestamp, '%Y-%m-%d %H:%M:%S'))
+			data$path <- gsub("\\?.*", "", data$url)
 
-		data = cbind(
-			timestamp = data[13],
-			apache = data[,14][,1],
-			time = data[,14][,2],
-			ip = data[,1],
-			info = data[,15],
-			method = data[,16][,1],
-			url = data[,16][,2],
-			code = data[,9],
-			size = data[,10],
-			referrer = data[,11],
-			agent = data[,12])
+			cat("  Done\n");
 
-		data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
-		data$size <- as.numeric(gsub('-', NA, as.character(data$size)))
-		data$info <- as.character(data$info)
-		data$code <- as.character(data$code)
-		data$path <- gsub("\\?.*", "", data$url)
+		} else { # Use Apache access logs, which uses the apache_note function to record all the details.
 
-		cat("  Done\n");
+			cat("Loading access logs...\n");
+
+			data = read.table(data_path, sep=" ")
+
+			cat("  Done\n");
+			cat("Parsing data...\n");
+
+			data$timestamp = as.POSIXct(strptime(paste(data[,5], data[,6]), '[%Y-%m-%d %H:%M:%S]'))
+			data$timings <- str_match(data[,7], "\\[([0-9]*)/(.*)\\]")[,c(2,3)]
+			data$info <- str_match(data[,4], "\\[(.*)\\]")[,2]
+			data$request <- str_match(data[,8], "([A-Z]+) (/.*) HTTP")[,c(2,3)]
+
+			data = cbind(
+				timestamp = data[13],
+				apache = data[,14][,1],
+				time = data[,14][,2],
+				ip = data[,1],
+				info = data[,15],
+				method = data[,16][,1],
+				url = data[,16][,2],
+				code = data[,9],
+				size = data[,10],
+				referrer = data[,11],
+				agent = data[,12])
+
+			data$time <- as.numeric(gsub('-', NA, as.character(data$time)))
+			data$size <- as.numeric(gsub('-', NA, as.character(data$size)))
+			data$info <- as.character(data$info)
+			data$code <- as.character(data$code)
+			data$path <- gsub("\\?.*", "", data$url)
+
+			cat("  Done\n");
+
+		}
 
 	#--------------------------------------------------
 
@@ -255,11 +272,15 @@ save_stats <- function(admin_ip) {
 
 		show_method_paths(subset <- subset(data, !grepl("^/a/js/", path) & ip != admin_ip & time > 0 & time < 1), 0.1, file.path(path, "slow-summary.csv"));
 
-		save_subset(file.path(path, "errors-500.csv"), subset(data, ip != admin_ip & time > 0 & code == 500));
+		if (!exists('data_fields')) { # Framework logs do not contain 500 and other errors (e.g. 404).
 
-		errors_subset = subset(data, ip != admin_ip & time > 0 & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 500);
-		setorder(errors_subset, "url");
-		save_subset(file.path(path, "errors-other.csv"), errors_subset);
+			save_subset(file.path(path, "errors-500.csv"), subset(data, ip != admin_ip & time > 0 & code == 500));
+
+			errors_subset = subset(data, ip != admin_ip & time > 0 & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 500);
+			setorder(errors_subset, "url");
+			save_subset(file.path(path, "errors-other.csv"), errors_subset);
+
+		}
 
 		for (k in data_user_types) {
 
@@ -296,14 +317,16 @@ save_stats <- function(admin_ip) {
 
 		}
 
-		subset <- subset(data, size > 0 & ip != admin_ip);
-		subset <- subset[c("size", "path")];
-		subset <- head(subset[order(-subset$size),], n=30);
-		save_subset(file.path(path, "requests-size.csv"), subset);
+		if (!exists('data_fields')) { # Framework logs do not contain response size.
+
+			subset <- subset(data, size > 0 & ip != admin_ip);
+			subset <- subset[c("size", "path")];
+			subset <- head(subset[order(-subset$size),], n=30);
+			save_subset(file.path(path, "requests-size.csv"), subset);
+
+		}
 
 	#--------------------------------------------------
-
-# TODO: Also limit to POST?
 
 		if (exists('data_slow_paths')) {
 			data_perf <- subset(data, !(path %in% data_slow_paths));
