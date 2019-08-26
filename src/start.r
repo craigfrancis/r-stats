@@ -72,16 +72,16 @@ data_load <- function(data_path) {
 
 	#--------------------------------------------------
 
-		if (exists('data_info_timings')) { # http://stackoverflow.com/questions/34590381/parsing-and-calculating-numbers-in-r
+		if (exists('data_timings')) { # http://stackoverflow.com/questions/34590381/parsing-and-calculating-numbers-in-r
 			cat("Parsing timings...\n");
-			data_info_timings2 <- paste(data_info_timings, "_2", sep="");
+			data_timings2 <- paste(data_timings, "_2", sep="");
 			setDT(data, keep.rownames = TRUE);
 			data <- data %>%
-				cSplit(data_info_timings, ",", "long") %>%               # split, long format, by ","
-				cSplit(data_info_timings, "=") %>%                       # split, wide format, by "="
+				cSplit(data_timings, ",", "long") %>%               # split, long format, by ","
+				cSplit(data_timings, "=") %>%                       # split, wide format, by "="
 				group_by(rn) %>%                                         # group by row names
 				summarise(time = time[1],                                # first value of time...
-				          time_ext = round(sum(info_timings_2), 4)) %>%  # sum of values
+				          time_ext = round(sum(timings_2), 4)) %>%  # sum of values
 				replace(is.na(.), 0) %>%                                 # change na into 0
 				mutate(time_php = round((time - time_ext), 4)) %>%       # calculate the difference
 				left_join(data, by=c("rn", "time")) %>%                  # merge with original data

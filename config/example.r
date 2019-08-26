@@ -2,11 +2,11 @@
 data_project = "[NAME]";
 data_path = "[SOURCE]";
 
-data_info = c("user_id", "admin_id", "info_timings");
+data_info = c("user_id", "admin_id", "timings");
 
-data_info_timings = "info_timings";
+data_timings = "timings";
 
-data_order = c("timestamp", "time", "time_ext", "time_php", "user_id", "admin_id", "info_timings", "method", "path", "code", "size", "ip", "url", "info", "apache", "referrer", "agent");
+data_order = c("timestamp", "time", "time_ext", "time_php", "user_id", "admin_id", "timings", "method", "path", "code", "size", "ip", "url", "info", "apache", "referrer", "agent");
 
 data_ignore_paths = c(
 		"/a/api/cli-diff-db/",
