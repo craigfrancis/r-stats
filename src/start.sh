@@ -5,7 +5,8 @@ if [ -z "${1:-}" -o -z "${2:-}" ]; then
 	exit;
 else
 	NAME="$1";
-	SOURCE="$2";
+	SRC_DETAIL="$2";
+	SRC_ERRORS="$3";
 fi
 
 ROOT="/Volumes/WebServer/Projects/craig.rstats/src";
@@ -26,12 +27,12 @@ if [ ! -f "$CONFIG" ]; then
 	exit;
 fi
 
-cat "${CONFIG}" | sed "s/\[SOURCE\]/${SOURCE//\//\\/}/" | sed "s/\[NAME\]/${NAME}/" > "${ROOT}/.Rconfig";
+cat "${CONFIG}" | sed "s/\[SRC_DETAIL\]/${SRC_DETAIL//\//\\/}/" | sed "s/\[SRC_ERRORS\]/${SRC_ERRORS//\//\\/}/" | sed "s/\[NAME\]/${NAME}/" > "${ROOT}/.Rconfig";
 
-if [ -n "${3:-}" ]; then
+if [ -n "${4:-}" ]; then
 
 	echo "" >> "${ROOT}/.Rconfig";
-	echo "auto_save_stats_ip = '${3:-}';" >> "${ROOT}/.Rconfig";
+	echo "auto_save_stats_ip = '${4:-}';" >> "${ROOT}/.Rconfig";
 
 	/Applications/R.app/Contents/MacOS/R "${ROOT}/"
 

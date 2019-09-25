@@ -2,9 +2,9 @@
 
 source("./.Rconfig");
 
-data <- data_drop(data_all, c("apache", "referrer", "agent", "url"));
+data <- data_drop(data_all_detail, c("apache", "referrer", "agent", "url"));
 
-data <- data_drop(data_all, c("apache", "referrer", "agent"));
+data <- data_drop(data_all_detail, c("apache", "referrer", "agent"));
 data$url <- substr(data$url, 0, 100);
 
 --------------------------------------------------

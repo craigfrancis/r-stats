@@ -152,9 +152,9 @@ The [start.r](./src/start.r) script defines some functions, and executes your pr
 Which could simply run the `data_load` function:
 
 	data_project = "[NAME]";
-	data_path = "[SOURCE]";
+	data_path_detail = "[SRC_DETAIL]";
 
-	data_all = data_load(data_path);
+	data_all = data_load(data_path_detail);
 
 Or it could be setup to ignore certain URL's which are always going to be slow - for example the login form ([example](./config/example.r)).
 
