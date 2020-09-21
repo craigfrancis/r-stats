@@ -276,7 +276,20 @@ save_stats <- function(data, admin_ip, errors) {
 
 			save_subset(file.path(path, "errors-500.csv"), subset(data, ip != admin_ip & code == 500));
 
-			errors_subset = subset(data, ip != admin_ip & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 408 & code != 500);
+				#--------------------------------------------------
+				# Some 400 errors relate to PartialUpload's... which can be found in the framework log.
+				# Maybe find a way to merge these based on SourceIP and Path, with rough timestamp matching, e.g.
+				#
+				# 2020-09-15 12:10:51 | 85.115.53.201 | POST | /upload/files/?id=59186 <-- Error Log
+				# 2020-09-15 12:10:59 | 85.115.53.201 | POST | /upload/files/?id=59186 | PartialUpload=file1  <-- Framework Log
+				# 2020-09-15 12:10:59 | 85.115.53.201 | POST | /upload/files/?id=59186 <-- Error Log
+				# 2020-09-15 12:11:03 | 85.115.53.201 | POST | /upload/files/?id=59186 | PartialUpload=file2  <-- Framework Log
+				# 2020-09-15 12:20:15 | 85.115.53.201 | POST | /upload/files/?id=59232 <-- Error Log
+				# 2020-09-15 12:20:34 | 85.115.53.201 | POST | /upload/files/?id=59232 | PartialUpload=file3  <-- Framework Log
+
+			save_subset(file.path(path, "errors-400.csv"), subset(data, ip != admin_ip & code == 400));
+
+			errors_subset = subset(data, ip != admin_ip & code != 200 & code != 206 & code != 301 & code != 302 & code != 304 & code != 408 & code != 400 & code != 500); # 408 = Request Timeout
 			setorder(errors_subset, "url");
 			save_subset(file.path(path, "errors-other.csv"), errors_subset);
 
