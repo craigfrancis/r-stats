@@ -78,6 +78,19 @@ Averages graph, by hour:
 
 --------------------------------------------------
 
+Timestamp events, shown as vertical lines for each, with a red line showing the change point:
+
+	subset <- subset(data_errors, code == 400 & path == '/student/assessment/files/')
+	subset$time <- 1
+	setorder(subset, "timestamp");
+
+	plot(subset$timestamp, subset$time, type='h', ann=FALSE, ylim = c(0,max(subset$time) * 1), yaxs="i", xaxt="n", yaxt="n", panel.first = abline(v = as.POSIXct("2022-05-12 20:00:00"), col = "red", lwd=5));
+	axis.POSIXct(1, at=seq(as.Date(min(subset$timestamp)), as.Date(max(subset$timestamp)), by="day"), format="%e %b", las=2, lwd=0, lwd.ticks=1);
+
+	save_screenshot('~/Downloads/Stats.png', 200);
+
+--------------------------------------------------
+
 Misc:
 
 	stats_max(subset, 300);
