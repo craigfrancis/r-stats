@@ -149,7 +149,7 @@ stats_range <- function() {
 }
 
 stats_max <- function(data, size = 30) {
-	print(tail(subset[order(data$time),], n=size))
+	print(tail(subset[order(data$time),], n=size), n=size)
 }
 
 stats_group <- function(data, field) {
